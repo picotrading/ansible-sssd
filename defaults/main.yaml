@@ -1,0 +1,18 @@
+---
+
+# Package to be installed (you can force a specific version here)
+sssd_pkg: sssd
+
+# Default sssd config (you probably want to overwrite this)
+sssd_config:
+  sssd:
+    domains: LOCAL
+    services: nss
+    config_file_version: 2
+  nss:
+    filter_groups: root
+    filter_users: root
+  'domain/LOCAL':
+    id_provider: local
+    auth_provider: local
+    access_provider: permit

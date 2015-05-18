@@ -1,0 +1,43 @@
+---
+
+- name: Test distribution
+  assert:
+    that: >
+      ansible_os_family == "RedHat"
+
+- name: Install sssd package for RedHat
+  yum:
+    name: "{{ sssd_pkg }}"
+    state: present
+  notify:
+    - Restart sssd
+  tags:
+    - sssd_pkg
+
+- name: Configure sssd service
+  template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    mode: 0600
+    owner: root
+    group: root
+  notify:
+    - Restart sssd
+  tags:
+    - sssd_config
+
+- name: Make sure sssd service is running
+  service:
+    name: sssd
+    state: started
+  register: sssd_service_started
+  tags:
+    - sssd_config
+    - sssd_pkg
+
+- name: Make sure sssd service is enabled
+  service:
+    name: sssd
+    enabled: yes
+  tags:
+    - sssd_config
